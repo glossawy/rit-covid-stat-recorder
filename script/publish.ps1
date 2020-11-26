@@ -30,20 +30,18 @@ function record {
 }
 
 $LocalTag = $Tag
-$DockerHubTag = "$Author/$Tag"
+$DockerHubTag = "$Author/$LocalTag"
 
-Write-Host "App        : $AppTag"
+Write-Host "App        : $LocalTag"
 Write-Host "Author     : $Author"
-Write-Host "Docker Tag : $DockerTag"
+Write-Host "Docker Tag : $DockerHubTag"
 Write-Host "Version    : $Version"
 Write-Host
 
-record .\gradlew --console verbose assemble
-
 record docker build -f .\Dockerfile -t "$LocalTag" --build-arg version="$Version" .
 
-record docker tag "$LocalTag" "$DockerHubTag":"$Version"
-record docker tag "$LocalTag" "$DockerHubTag":current
+record docker tag "$LocalTag" "${DockerHubTag}:$Version"
+record docker tag "$LocalTag" "${DockerHubTag}:current"
 
-record docker push "$DockerHubTag":"$Version"
-record docker push "$DockerHubTag":current
+record docker push "${DockerHubTag}:$Version"
+record docker push "${DockerHubTag}:current"
