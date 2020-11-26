@@ -1,5 +1,5 @@
 ###
-# This is for local use,
+# This is for local use
 ###
 
 # Use this file to easily define all of your cron jobs.

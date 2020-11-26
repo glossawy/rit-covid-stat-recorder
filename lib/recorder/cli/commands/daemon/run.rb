@@ -67,15 +67,16 @@ module Recorder
 
               next_run = Time.current
               loop do
-                if Time.current >= next_run
-                  Recorder.logger.debug("[#{name} daemon] executing #{method}")
-                  send(method)
-                  next_run = duration.from_now
-                  Recorder.logger.debug("[#{name} daemon] next run at: #{next_run.to_formatted_s(:long_ordinal)}")
-                else
-                  Recorder.logger.debug("[#{name} daemon] skipped, called before next_at at #{next_run.to_formatted_s(:long_ordinal)}")
+                Recorder.logger.with_prefix(name) do
+                  if Time.current >= next_run
+                    Recorder.logger.debug("executing #{method}")
+                    send(method)
+                    next_run = duration.from_now
+                    Recorder.logger.debug("next run at: #{next_run.to_formatted_s(:long_ordinal)}")
+                  else
+                    Recorder.logger.debug("skipped, called before next_at at #{next_run.to_formatted_s(:long_ordinal)}")
+                  end
                 end
-
                 Fiber.yield next_run
               end
             end
@@ -98,7 +99,13 @@ module Recorder
 
           def do_backup!
             Recorder.logger.info("Doing backup...")
-            ScriptRunner.execute 'backup'
+            script_output = ScriptRunner.run 'backup'
+
+            Recorder.logger.with_prefix('(shell)') do
+              script_output.lines.each do |line|
+                Recorder.logger.info line.chomp
+              end
+            end
           end
 
           def parse_duration(period)

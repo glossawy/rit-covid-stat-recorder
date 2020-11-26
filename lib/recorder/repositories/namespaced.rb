@@ -1,5 +1,7 @@
 module Recorder::Repositories
   module Namespaced
+    # Hanami repositories dont handle namespaces right
+
     class RelationName < Hanami::Model::RelationName; end
     
     class EntityName < Hanami::Model::EntityName
