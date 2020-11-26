@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+set -Eeuo pipefail
+
+trap 'err=$?; echo "Failed to backup database! Status Code: $err"; exit $err' ERR 
+
+db_name='stats.sqlite3'
+db_backup='stats.sqlite3.bak'
+
+log() {
+  print -Pn "[recorder] [INFO] [%D{%Y-%m-%d %H:%M:%S %z}] "
+  printf "$*\n"
+}
+
+record() {
+  printf "+ $*\n"
+  $*
+}
+
+log "Backing up $db_name..."
+record sqlite3 -readonly ./db/$db_name ".backup main ./db/$db_backup"
+log "$db_name backed up to $db_backup successfully!"
