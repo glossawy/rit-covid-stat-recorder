@@ -7,8 +7,10 @@ module Recorder
 
           option :persist, type: :boolean, default: false, desc: 'Persist stats to db'
           option :notify, type: :boolean, default: false, desc: 'Toast notification when relvant statistic'
+          option :spider, type: :string, default: Recorder::Spiders::CURRENT, desc: 'Which spider to use', values: Recorder::Spiders::NAMES_TO_SPIDERS.keys.map(&:to_s)
 
-          def call(persist:, notify:, **options)
+          def call(persist:, notify:, spider:, **options)
+            @spider_name = spider
             context = Context.new(persist?: persist, notify?: notify, options: options)
 
             fetch_data(context)

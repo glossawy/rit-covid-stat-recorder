@@ -5,8 +5,6 @@ Bundler.require(:default)
 require 'active_support/all'
 require 'google/apis/sheets_v4'
 
-ActiveSupport::Dependencies.unhook!
-
 require 'hanami/logger'
 require 'recorder/logging/multi_logger'
 

@@ -3,8 +3,10 @@ module Recorder
     module Commands
       module Scrape
         class Command < Commands::Command
+          attr_reader :spider_name
+
           def scraper
-            Recorder::Spiders::RitCovidSpider
+            Recorder::Spiders::NAMES_TO_SPIDERS[spider_name&.to_sym || Recorder::Spiders::CURRENT]
           end
 
           def scrape!(url = nil)

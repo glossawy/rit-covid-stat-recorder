@@ -1,3 +1,5 @@
+require 'shellwords'
+
 module Recorder
   class CLI
     module Commands
@@ -7,8 +9,10 @@ module Recorder
 
           argument :period, desc: 'iso8601 duration representing frequency of scrape attempts', require: false, default: 'P1H'
           argument :backup_period, desc: 'iso8601 duration representing frequency of db backup', require: false, default: 'P12H'
+          option :spider, desc: 'name of spider to use', default: Recorder::Spiders::CURRENT, values: Recorder::Spiders::NAMES_TO_SPIDERS.keys.map(&:to_s)
 
-          def call(period:, backup_period:, **options)
+          def call(period:, backup_period:, spider:, **options)
+            @spider_name = spider
             context = Context.new(
               periods: {
                 fetch: parse_duration(period),
@@ -88,9 +92,15 @@ module Recorder
             Recorder.logger.info("Doing fetch...")
 
             begin
-              cli.call(arguments: %w[scrape fetch --persist])
-              cli.call(arguments: %w[export google])
-              Recorder.logger.info('Fetch successful')
+              fetch_command = %W[scrape fetch --persist --spider=#{@spider_name}]
+              Recorder.logger.debug(Shellwords.join([$PROGRAM_NAME, *fetch_command]))
+              cli.call(arguments: fetch_command)
+
+              export_command = %w[export google]
+              Recorder.logger.debug(Shellwords.join([$PROGRAM_NAME, *export_command]))
+              cli.call(arguments: export_command)
+
+              Recorder.logger.info('Scrape successful')
             rescue => e
               Recorder.logger.error('Scraping failed with an error')
               Recorder.logger.error(e.full_message)
