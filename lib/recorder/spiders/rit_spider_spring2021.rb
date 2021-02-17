@@ -2,6 +2,11 @@ module Recorder::Spiders
   class RitSpiderSpring2021 < RitSpiderBase
     self.dashboard_url = 'https://www.rit.edu/ready/spring-dashboard'
 
+    LAST_TOTALS_FALL = {
+      total_cases_students: 158,
+      total_cases_employees: 147,
+    }
+
     single_value_field :status,
                        selector: '.d-md-inline-block > a:nth-child(3)',
                        when_defunct: 'Defunct/Unknown'
@@ -26,7 +31,9 @@ module Recorder::Spiders
         campus_status: status || '',
         last_updated_at: last_updated_at,
         num_days_included: Integer(days_included)
-      )
+      ).merge!(
+        **LAST_TOTALS_FALL
+      ) { |_k, old, new| old + new }
     end
   end
 end
