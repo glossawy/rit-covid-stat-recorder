@@ -91,7 +91,7 @@ module Recorder
         end
 
         def append(stat, *stats)
-          stats = [stat, *stats]
+          stats = [stat, *stats].sort_by(&:last_updated_at)
           values = stats.map { |s| map_stat_to_row(s) }
 
           response = svc.append_spreadsheet_value(*append_req(values))
