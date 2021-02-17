@@ -15,7 +15,7 @@ module Recorder::Repositories
           collection_attempt: {
             success: true,
             reason: reason || '',
-            note: reason || '',
+            note: note || '',
             attempted_at: data.recorded_at,
           },
         )

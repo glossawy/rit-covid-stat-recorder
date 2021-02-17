@@ -113,6 +113,9 @@ GEM
     headless (2.3.1)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
+    httparty (0.18.1)
+      mime-types (~> 3.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     i18n (1.8.9)
       concurrent-ruby (~> 1.0)
@@ -158,6 +161,7 @@ GEM
     mini_portile2 (2.5.0)
     minitest (5.14.3)
     multi_json (1.15.0)
+    multi_xml (0.6.0)
     multipart-post (2.1.1)
     murmurhash3 (0.1.6)
     net-http-digest_auth (1.4.1)
@@ -292,6 +296,7 @@ DEPENDENCIES
   dry-cli
   google-api-client
   hanami-model
+  httparty
   kimurai
   os
   pry (~> 0.12.0)

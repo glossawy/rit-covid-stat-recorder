@@ -63,6 +63,7 @@ module Recorder
       require 'recorder/cli/commands/scrape'
       require 'recorder/cli/commands/export'
       require 'recorder/cli/commands/daemon'
+      require 'recorder/cli/commands/import'
     end
   end
 end
