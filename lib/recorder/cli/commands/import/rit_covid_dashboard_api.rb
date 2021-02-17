@@ -32,7 +32,7 @@ module Recorder
                   LEVEL_TRANSFORM_SPRING[v]
                 end
 
-              { campus_status: status  }
+              { campus_status: status }
             },
             beds_available: :isolation_bed_availability,
             isolation_off_campus: :isolated_off_campus,
@@ -112,6 +112,7 @@ module Recorder
 
             statistic.merge!(
               surveillance_positive_ratio: -1,
+              num_days_included: 14,
               recorded_at: recorded_on,
             )
 
