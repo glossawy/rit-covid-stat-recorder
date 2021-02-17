@@ -3,7 +3,7 @@ MAINTAINER Glossawy (glossawy@protonmail.com)
 
 ARG period=P1H
 
-RUN apk add build-base sqlite-dev tzdata
+RUN apk add build-base sqlite-dev tzdata less
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN gem install bundler
