@@ -44,19 +44,28 @@ module Recorder::Spiders
     end
 
     def self.single_value_field(field_name, selector:, when_defunct:, debug_name: nil)
-      value = nil
       debug_name ||= field_name.to_s.tr('_', ' ')
-      define_method field_name do
-        value ||=
-          if defunct?
-            case when_defunct
-              when Proc then when_defunct.call
-              else when_defunct
-            end
-          elsif response
-            first_cleansed_for_css(selector, debug_name: debug_name)
+      field_find_name ||= "find_#{field_name}_in_response"
+
+      define_method(field_find_name) do
+        if defunct?
+          case when_defunct
+          when Proc then when_defunct.call
+          else when_defunct
           end
+        elsif response
+          first_cleansed_for_css(selector, debug_name: debug_name)
+        end.tap do |x|
+          logger.debug("Found value for #{debug_name} (#{field_name}): << #{x} >>")
+        end
       end
+      private(field_find_name)
+
+      class_eval(<<~RUBY, __FILE__, __LINE__ + 1)
+        def #{field_name}
+          @#{field_name} ||= #{field_find_name}
+        end
+      RUBY
 
       single_value_fields << field_name
     end
