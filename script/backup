@@ -1,15 +1,15 @@
 #!/bin/sh
 set -euo pipefail
 
-trap 'err=$?; echo "Failed to backup database! Status Code: $err"; exit $err' ERR
+trap 'err=$?; echo "Failed to backup database! Status Code: $err"; exit $err' INT TERM
 
 db_name='stats.sqlite3'
 db_backup='stats.sqlite3.bak'
 
-record() {
-  printf "+ $*\n"
-  $*
-}
+record() (
+  set -x
+  "$@"
+)
 
 echo "Backing up $db_name..."
 record sqlite3 -readonly ./db/$db_name ".backup main ./db/$db_backup"
