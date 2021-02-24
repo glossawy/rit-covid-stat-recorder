@@ -1,15 +1,42 @@
 #!/bin/sh
 set -euo pipefail
 
-trap 'err=$?; echo "Failed to backup database! Status Code: $err"; exit $err' INT TERM
+catch() {
+  local code=$1
+  local to_exec=$2
+
+  if [ "$code" != "0" ]; then
+    $to_exec
+    echo 'Failed to backup database! status code:' "$code"
+    exit $code
+  fi
+}
+
+catch_and_do_nothing() {
+  catch $1 true
+}
+
+trap 'catch_and_do_nothing $?' INT TERM EXIT
 
 db_name='stats.sqlite3'
 db_backup='stats.sqlite3.bak'
+db_backup_backup='stats.sqlite3.bak.bak'
+
+restore_err() {
+  echo 'Backup failed, restoring previous backup...'
+  record cp "./db/$db_backup_backup" "./db/$db_backup"
+}
 
 record() (
   set -x
   "$@"
 )
+
+if [ -f "./db/${db_backup}" ]; then
+  echo "Maintaining backup: db/$db_backup -> db/$db_backup_backup..."
+  record cp "./db/$db_backup" "./db/$db_backup_backup"
+  trap 'catch $? restore_err' INT TERM EXIT
+fi
 
 echo "Backing up $db_name..."
 record sqlite3 -readonly ./db/$db_name ".backup main ./db/$db_backup"

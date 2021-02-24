@@ -6,7 +6,7 @@ credentials.json
 token.yaml
 
 db/stats.sqlite3
-db/stats.sqlite3.bak
+db/stats.sqlite3.*
 
 bin/**/*
 !/bin/recorder
