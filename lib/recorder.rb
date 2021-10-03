@@ -25,7 +25,7 @@ module Recorder
   module Paths
     require 'pathname'
     module_function
-    
+
     def root
       Pathname.new File.expand_path('../', __dir__)
     end
@@ -54,20 +54,20 @@ module Recorder
 
   require 'googleauth'
   require 'googleauth/stores/file_token_store'
-  
+
   OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
   APPLICATION_NAME = "RIT Covid Stat Scraper".freeze
   CREDENTIALS_PATH = File.expand_path('../credentials.json', __dir__).freeze
   TOKEN_PATH = File.expand_path('../token.yaml', __dir__).freeze
   SCOPE = 'https://www.googleapis.com/auth/spreadsheets'.freeze
-  
+
   private
 
   def self.authorize
     client_id = Google::Auth::ClientId.from_file CREDENTIALS_PATH
     token_store = Google::Auth::Stores::FileTokenStore.new file: TOKEN_PATH
     authorizer = Google::Auth::UserAuthorizer.new client_id, SCOPE, token_store
-  
+
     user_id = 'default'
     credentials = authorizer.get_credentials user_id
     if credentials.nil?

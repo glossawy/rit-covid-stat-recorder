@@ -10,7 +10,7 @@ module Recorder::Spiders
 
     single_value_field :status,
                        selector: '.d-md-inline-block > a:nth-child(3)',
-                       when_defunct: 'Defunct/Unknown'
+                       when_defunct: Recorder::Entities::CovidStat::STATUS_UNKNOWN
 
     single_value_field :last_updated_at,
                        selector: '.large',

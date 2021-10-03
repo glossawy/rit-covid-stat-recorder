@@ -8,6 +8,9 @@ module Recorder
           desc "Fetch and get missing data from ritcoviddashboard.com api"
 
           SPRING_FALL_CUTOFF = Time.zone.parse('2020-01-22')
+          SPRING_2021_SUMMER_2021_CUTOFF = Time.zone.parse('2021-05-26')
+
+          FALL_2021_START = Time.zone.parse('2021-08-16')
 
           LEVEL_TRANSFORM_FALL = {
             'green' => 'Green (Low Risk with Vigilance)',
@@ -28,11 +31,11 @@ module Recorder
               status =
                 if time <= SPRING_FALL_CUTOFF
                   LEVEL_TRANSFORM_FALL[v]
-                else
+                elsif time <= SPRING_2021_SUMMER_2021_CUTOFF
                   LEVEL_TRANSFORM_SPRING[v]
                 end
 
-              { campus_status: status }
+              { campus_status: status.presence || Recorder::Entities::CovidStat::STATUS_UNKNOWN }
             },
             beds_available: :isolation_bed_availability,
             isolation_off_campus: :isolated_off_campus,
@@ -45,8 +48,26 @@ module Recorder
             new_staff: :new_cases_employees,
             new_students: :new_cases_students,
             tests_administered: :tests_to_date,
-            total_staff: :total_cases_employees,
-            total_students: :total_cases_students,
+            total_staff: ->(v, time) {
+              adjusted_value =
+                if time >= FALL_2021_START
+                  Recorder::Spiders::RitSpiderFall2021::LAST_TOTALS_SPRING[:total_cases_employees] + v
+                else
+                  v
+                end
+
+              { total_cases_employees: adjusted_value }
+            },
+            total_students: ->(v, time) {
+              adjusted_value =
+                if time >= FALL_2021_START
+                  Recorder::Spiders::RitSpiderFall2021::LAST_TOTALS_SPRING[:total_cases_students] + v
+                else
+                  v
+                end
+
+              { total_cases_students: adjusted_value }
+            },
           }
 
           option :reason, type: :string, required: true, desc: 'Reason for restoration'

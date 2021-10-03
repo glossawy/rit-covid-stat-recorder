@@ -2,6 +2,8 @@ module Recorder::Entities
   class CovidStat < Hanami::Entity
     delegate :attempted_at, to: :collection_attempt, allow_nil: true
 
+    STATUS_UNKNOWN = 'Defunct/Unknown'.freeze
+
     def collection_attempt
       ca = super
 
