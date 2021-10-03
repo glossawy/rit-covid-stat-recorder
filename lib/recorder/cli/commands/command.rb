@@ -6,7 +6,7 @@ module Recorder
 
         def initialize
           require 'recorder/cli/commands/templates'
-          @templates = Templates.new(self.class) 
+          @templates = Templates.new(self.class)
         end
 
         private
@@ -20,7 +20,7 @@ module Recorder
             ::ERB.new(template, nil, "-").result(context)
           end
         end
-  
+
         SAY_FORMATTER = "%<operation>12s %<path>s\n".freeze
 
         def render(path, context)
@@ -50,7 +50,7 @@ module Recorder
         def say(operation, path)
           info(SAY_FORMATTER % { operation: operation, path: path })
         end
-        
+
         def collection_attempt_repo
           Repositories::CollectionAttemptRepository.new
         end
@@ -68,40 +68,40 @@ module Recorder
         end
 
         def rit_updated_at
-          most_recent_stat.last_updated_at
+          most_recent_stat&.last_updated_at || Time.utc(1970)
         end
 
         def stats_sheet
           require 'recorder/cli/commands/stat_sheet'
           @stats_sheet ||= StatSheet.new
         end
-        
-        class << self 
+
+        class << self
           def root
             File
           end
-  
+
           def migrations
             root.join('db', 'migrations')
           end
-  
+
           def migration(context)
             filename = "%{timestamp}_%{name}" % { timestamp: current_migration_timestamp, name: context.migration }
             root.join('db', 'migrations', "#{filename}.rb")
           end
-          
+
           def find_migration(context)
             Dir.glob(root.join('db', 'migrations', "*_#{context.migration}.rb")).sort!.first
           end
-          
+
           def current_migration_timestamp
             Time.now.utc.strftime('%Y%m%d%H%M%S')
           end
-  
+
           def entity(context)
             root.join('lib', 'recorder', 'entities', "#{context.model}.rb")
           end
-  
+
           def repository(context)
             root.join('lib', 'recorder', 'repositories', "#{context.model}_repository.rb")
           end

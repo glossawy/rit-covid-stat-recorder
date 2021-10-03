@@ -5,22 +5,24 @@ module Recorder
     require 'recorder/spiders/rit_spider_base'
     require 'recorder/spiders/rit_spider_fall2020'
     require 'recorder/spiders/rit_spider_spring2021'
+    require 'recorder/spiders/rit_spider_fall2021'
 
-    CURRENT = :spring
+    CURRENT = :fall2021
     NAMES_TO_SPIDERS = {
-      fall: RitSpiderFall2020,
-      spring: RitSpiderSpring2021,
+      fall2020: RitSpiderFall2020,
+      spring2021: RitSpiderSpring2021,
+      fall2021: RitSpiderFall2021,
     }
 
     %i[
-      fall2020
-      fall_spider
-    ].each { |n| NAMES_TO_SPIDERS[n] = NAMES_TO_SPIDERS[:fall] }
+      spring
+      spring_spider
+    ].each { |n| NAMES_TO_SPIDERS[n] = NAMES_TO_SPIDERS[:spring2021] }
 
     %i[
-      spring2021
-      spring_spider
-    ].each { |n| NAMES_TO_SPIDERS[n] = NAMES_TO_SPIDERS[:spring] }
+      fall
+      fall_spider
+    ].each { |n| NAMES_TO_SPIDERS[n] = NAMES_TO_SPIDERS[:fall2021] }
 
     NAMES_TO_SPIDERS[:current] = NAMES_TO_SPIDERS[CURRENT]
 

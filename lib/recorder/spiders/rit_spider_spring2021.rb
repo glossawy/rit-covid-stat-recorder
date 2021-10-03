@@ -1,10 +1,11 @@
 module Recorder::Spiders
   class RitSpiderSpring2021 < RitSpiderBase
-    self.dashboard_url = 'https://www.rit.edu/ready/spring-dashboard'
+    self.dashboard_url = 'https://www.rit.edu/ready/spring-2021-dashboard'
+    self.defunct_as_of = Date.parse('May 25, 2021')
 
     LAST_TOTALS_FALL = {
-      total_cases_students: 158,
-      total_cases_employees: 147,
+      total_cases_students: 221,
+      total_cases_employees: 45,
     }
 
     single_value_field :status,
