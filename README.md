@@ -1,6 +1,8 @@
 RIT Covid Stat Recorder
 ---
 
+[![Latest Version 2.3.2][docker-version-badge-url]][docker-hub-url] [![Licensed under the GNU Public License version 3.0][license-badge-url]](./LICENSE.md) [![Maintenace Status: YES][maintenance-badge-url]](./README.md)
+
 A simple page scraper that takes a number of stats off the [RIT Covid Stats](https://www.rit.edu/ready/dashboard) page and saves them to a database and google sheets.
 
 For fun, this scraper uses [Hanami](https://github.com/hanami/model) libraries for database work and logging instead of ActiveRecord or ActiveSupport.
@@ -81,3 +83,9 @@ Logging output while running is written to stdout as well as:
   - powershell script to use [BurntToast](https://github.com/Windos/BurntToast) to display popup notifications for new stats on windows only
 - `scripts/publish` and `scripts/publish.ps1`
   - zsh and powershell scripts to publish a docker image to a docker hub repository with basic versioning
+
+[docker-version-badge-url]: https://img.shields.io/docker/v/glossawy/rit-covid-recorder?sort=semver&style=for-the-badge
+[docker-hub-url]: https://hub.docker.com/layers/glossawy/rit-covid-recorder/2.3.2/images/sha256-425cd0dc56d677c96cc398bf17b618369bd6dab683522532319604b4f6b0f449
+
+[license-badge-url]: https://img.shields.io/github/license/Glossawy/rit-covid-stat-recorder?style=for-the-badge
+[maintenance-badge-url]: https://img.shields.io/maintenance/yes/2021?style=for-the-badge
