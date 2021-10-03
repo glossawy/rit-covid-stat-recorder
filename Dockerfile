@@ -8,16 +8,19 @@ RUN apk add build-base sqlite sqlite-dev tzdata less
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN gem install bundler
 RUN bundle config --global frozen 1
+RUN mkdir -p /app/
 
-COPY Gemfile Gemfile.lock ./
+WORKDIR /app
+
+COPY Gemfile Gemfile.lock /app/
 RUN bundle install
+
+COPY ./credentials.json /app/credentials.json
+COPY ./token.yaml /app/token.yaml
 
 COPY ./bin /app/bin
 COPY ./lib /app/lib
 COPY ./script /app/script
-
-COPY ./credentials.json /app/credentials.json
-COPY ./token.yaml /app/token.yaml
 
 RUN cp /usr/share/zoneinfo/America/New_York /etc/localtime
 RUN echo "America/New_York" > /etc/timezone && date
@@ -27,6 +30,4 @@ ENV DAEMON_PERIOD="${period}"
 VOLUME /app/db
 VOLUME /app/log
 
-WORKDIR /app
-
-CMD bin/recorder daemon run ${DAEMON_PERIOD}
+CMD script/start

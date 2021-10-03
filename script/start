@@ -1,0 +1,14 @@
+#!/bin/sh
+
+adduser -D recorder
+
+chown -R recorder:recorder /app
+chmod -R u+rx /app
+
+chmod -R u+w /app/log
+chmod -R u+w /app/db
+
+su - recorder
+
+cd /app
+bin/recorder daemon run ${DAEMON_PERIOD}
