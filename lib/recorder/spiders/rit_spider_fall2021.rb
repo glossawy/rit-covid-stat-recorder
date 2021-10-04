@@ -20,7 +20,7 @@ module Recorder::Spiders
                        selector: 'p.mb-1:nth-child(2)',
                        when_defunct: 'Past 14 Days'
 
-    MISSING_FIELDS_TO_DEFAULTS = {
+    MISSING_STATISTICS_TO_DEFAULTS = {
       quarantined_on_campus: -1,
       quarantined_off_campus: -1,
       isolated_on_campus: -1,
@@ -37,7 +37,7 @@ module Recorder::Spiders
     def do_parse
       statistics = cleanse_for_css('.statistic > p:nth-child(1)')
 
-      statistics.concat(MISSING_FIELDS_TO_DEFAULTS.values)
+      statistics.concat(MISSING_STATISTICS_TO_DEFAULTS.values)
 
       statistics = sanitize(statistics)
 
