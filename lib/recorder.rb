@@ -9,6 +9,7 @@ require 'hanami/logger'
 require 'recorder/logging/multi_logger'
 
 require 'recorder/core_ext'
+require 'recorder/proc_or_value'
 require 'recorder/platform_dependent'
 require 'recorder/script_runner'
 require 'recorder/notifications'
