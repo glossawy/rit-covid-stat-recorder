@@ -9,7 +9,8 @@ module Recorder::Spiders
 
     single_value_field :status,
                        selector: '.d-md-inline-block > a:nth-child(3)',
-                       when_defunct: Recorder::Entities::CovidStat::STATUS_UNKNOWN
+                       when_defunct: Recorder::Entities::CovidStat::STATUS_UNKNOWN,
+                       when_missing: Recorder::Entities::CovidStat::STATUS_UNKNOWN
 
     single_value_field :last_updated_at,
                        selector: '.large',
@@ -18,8 +19,10 @@ module Recorder::Spiders
 
     single_value_field :days_included,
                        selector: 'p.mb-1:nth-child(2)',
-                       when_defunct: 'Past 14 Days'
+                       when_defunct: 'Past 14 Days',
+                       when_missing: 'Past 14 Days'
 
+    # This is for statistics caught by `#cleanse_for_css`
     MISSING_STATISTICS_TO_DEFAULTS = {
       quarantined_on_campus: -1,
       quarantined_off_campus: -1,
@@ -29,10 +32,6 @@ module Recorder::Spiders
       isolation_bed_availability: -1,
       surveillance_positive_ratio: -1,
     }.transform_values(&:to_s).freeze
-
-    def status
-      Recorder::Entities::CovidStat::STATUS_UNKNOWN
-    end
 
     def do_parse
       statistics = cleanse_for_css('.statistic > p:nth-child(1)')

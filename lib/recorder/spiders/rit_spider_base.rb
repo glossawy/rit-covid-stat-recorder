@@ -43,18 +43,18 @@ module Recorder::Spiders
       end
     end
 
-    def self.single_value_field(field_name, selector:, when_defunct:, debug_name: nil)
+    def self.single_value_field(field_name, selector:, when_defunct:, when_missing: nil, debug_name: nil)
       debug_name ||= field_name.to_s.tr('_', ' ')
       field_find_name ||= "find_#{field_name}_in_response"
 
+      when_defunct = Recorder::ProcOrValue.new(when_defunct)
+      when_missing = Recorder::ProcOrValue.new(when_missing)
+
       define_method(field_find_name) do
         if defunct?
-          case when_defunct
-          when Proc then when_defunct.call
-          else when_defunct
-          end
+          when_defunct.call_or_get
         elsif response
-          first_cleansed_for_css(selector, debug_name: debug_name)
+          first_cleansed_for_css(selector, debug_name: debug_name).presence || when_missing.call_or_get
         end.tap do |x|
           logger.debug("Found value for #{debug_name} (#{field_name}): << #{x} >>")
         end
