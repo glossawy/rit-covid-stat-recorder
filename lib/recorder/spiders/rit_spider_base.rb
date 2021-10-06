@@ -156,7 +156,7 @@ module Recorder::Spiders
       end
 
       surv_pos_pct = -1 if surv_pos_pct =~ /^[a-z]/i
-      tests_to_date.gsub!(/[^\d]/, '')
+      tests_to_date.gsub!(/[^\d]*?(-?\d+)[^\d]*/, '\1')
 
       {
         new_cases_students: nc_s,
