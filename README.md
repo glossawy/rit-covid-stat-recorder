@@ -1,7 +1,7 @@
 RIT Covid Stat Recorder
 ---
 
-[![Latest Version 2.3.3][docker-version-badge-url]][docker-hub-url] [![Licensed under the GNU Public License version 3.0][license-badge-url]](./LICENSE.md) [![Maintenace Status: YES][maintenance-badge-url]](./README.md)
+[![Latest Version 2.4.0][docker-version-badge-url]][docker-hub-url] [![Licensed under the GNU Public License version 3.0][license-badge-url]](./LICENSE.md) [![Maintenace Status: YES][maintenance-badge-url]](./README.md)
 
 A simple page scraper that takes a number of stats off the [RIT Covid Stats](https://www.rit.edu/ready/dashboard) page and saves them to a database and google sheets.
 
@@ -85,7 +85,7 @@ Logging output while running is written to stdout as well as:
   - zsh and powershell scripts to publish a docker image to a docker hub repository with basic versioning
 
 [docker-version-badge-url]: https://img.shields.io/docker/v/glossawy/rit-covid-recorder?sort=semver&style=for-the-badge
-[docker-hub-url]: https://hub.docker.com/layers/glossawy/rit-covid-recorder/2.3.3/images/sha256-7a3a2baf8d1f84f41d30cf9ef3d66890ba8e0c9335ad57f229718f7e1f073e2c?context=explore
+[docker-hub-url]: https://hub.docker.com/layers/glossawy/rit-covid-recorder/2.4.0/images/sha256-fd4bc5aa96ed6b358a624af3b688f928710b5398ca68645a7ea465390809b022
 
 [license-badge-url]: https://img.shields.io/github/license/Glossawy/rit-covid-stat-recorder?style=for-the-badge
 [maintenance-badge-url]: https://img.shields.io/maintenance/yes/2021?style=for-the-badge
