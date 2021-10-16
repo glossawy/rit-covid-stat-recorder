@@ -69,7 +69,7 @@ done
 
 [[ "$author" == false ]] && error-missing-argument '--author'
 [[ "$version" == false ]] && error-missing-argument '--version'
-[[ "$local_tag" == false ]] && error-missing-argument '--name'
+[[ "$local_tag" == false ]] && error-missing-argument '--tag'
 
 record() {
   echo "+ $*"
