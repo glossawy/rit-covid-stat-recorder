@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source .env
+
 adduser -D recorder
 
 chown -R recorder:recorder /app

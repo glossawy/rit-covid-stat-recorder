@@ -22,11 +22,17 @@ module Recorder::Repositories
       end
     end
 
+    def all
+      aggregate(:collection_attempt).map_to(Recorder::Entities::CovidStat).to_a
+    end
+
     def most_recent
       aggregate(:collection_attempt).reverse(:id).map_to(Recorder::Entities::CovidStat).first
     end
 
     def relevant_updates(reference_stat)
+      return all if reference_stat.blank?
+
       aggregate(:collection_attempt)
         .join(:collection_attempts)
         .where(
@@ -43,6 +49,8 @@ module Recorder::Repositories
     end
 
     def fuzzy_find_with_attempt(reference)
+      return nil if reference.blank?
+
       equivalent = %i[
         new_cases_students
         new_cases_employees

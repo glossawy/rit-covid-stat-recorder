@@ -54,9 +54,17 @@ module Recorder::Spiders
         if defunct?
           when_defunct.call_or_get
         elsif response
-          first_cleansed_for_css(selector, debug_name: debug_name).presence || when_missing.call_or_get
-        end.tap do |x|
-          logger.debug("Found value for #{debug_name} (#{field_name}): << #{x} >>")
+          first_cleansed_for_css(selector, debug_name: debug_name).presence
+        end.then do |x|
+          if x.present?
+            logger.debug("Found value for #{debug_name} (#{field_name}): << #{x} >>")
+            x
+          else
+            when_missing.call_or_get.tap do |default_value|
+              next unless default_value.present?
+              logger.debug("Default value used for #{debug_name} (#{field_name}): << #{default_value} >>")
+            end
+          end
         end
       end
       private(field_find_name)
@@ -99,12 +107,12 @@ module Recorder::Spiders
     define_method :cleanse, &(%i[strip text].map(&:to_proc).reduce { |a, e|  a << e })
 
     def default_for_first_with_warn(debug_name)
-      proc do |items, type, fmt|
+      proc do |type, items, fmt|
         case type
         when :too_many
           [fmt["More than one #{debug_name}, found %<size>d: %<items>s"], items.first]
         when :empty
-          [fmt["#{debug_name.to_s.titleize} not found in page"], nil]
+          [fmt["No value for #{debug_name} found"], nil]
         else
           [fmt["Invalid #{debug_name}"], nil]
         end

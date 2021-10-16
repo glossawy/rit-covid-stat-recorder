@@ -35,7 +35,9 @@ module Recorder
               end
           end
 
-          def define_column(letter = letter_enum.resume, attribute:, transform:, humanizer: nil)
+          def define_column(letter = nil, attribute:, transform:, humanizer: nil)
+            letter = letter_enum.resume while letter.nil? || letter.in?(COLUMN_TO_ATTR.keys)
+
             COLUMN_TO_ATTR[letter] = attribute
             COLUMN_TO_TRANSFORMS[letter] = transform.to_proc
             HUMANIZERS[letter] = humanizer.to_proc unless humanizer.nil?
@@ -84,6 +86,15 @@ module Recorder
 
         def initialize
           @svc = Recorder.sheets_api
+
+          Recorder.logger.info "Google Sheet ID  : #{sheet_id}"
+
+          if sheet_name
+            Recorder.logger.info "Google Sheet Name: #{sheet_name}"
+          else
+            Recorder.logger.warn \
+              "No GOOGLE_SHEET_NAME defined, ranges will not be prefixed and may be wrong on multi-sheet spreadsheets!"
+          end
         end
 
         def latest_entry
@@ -97,7 +108,7 @@ module Recorder
           response = svc.append_spreadsheet_value(*append_req(values))
 
           recorded_stats.concat(stats)
-          
+
           OpenStruct.new(
             updated_table: response.table_range,
             updated_rows: response.updates.updated_rows,
@@ -106,7 +117,9 @@ module Recorder
         end
 
         def sheet_id
-          GOOGLE_SHEET_ID
+          ENV.fetch('GOOGLE_SHEET_ID')
+        rescue KeyError
+          raise KeyError, "GOOGLE_SHEET_ID environment variable is not defined"
         end
 
         def recorded_stats
@@ -120,13 +133,22 @@ module Recorder
         end
 
         def range_prefix
-          "#{GOOGLE_SHEET_NAME}!"
+          if sheet_name.present?
+            "#{sheet_name}!"
+          else
+            (@warning_missing_sheet_name = true and puts 'No sheet name provided! Ranges may be wrong.') unless @warning_missing_sheet_name
+            ''
+          end
+        end
+
+        def sheet_name
+          ENV['GOOGLE_SHEET_NAME']
         end
 
         def ordered_attr_names
           @ordered_attr_names||= COLUMN_TO_ATTR.to_a.sort_by(&:first).map(&:second)
         end
-        
+
         def ordered_transforms
           @ordered_transforms ||= COLUMN_TO_TRANSFORMS.to_a.sort_by(&:first).map(&:second)
         end
@@ -143,7 +165,7 @@ module Recorder
           binding.pry
           raise
         end
-        
+
         def map_row_to_stat(row)
           Entities::CovidStat.new(map_row_to_hash(row))
         end
@@ -165,12 +187,12 @@ module Recorder
             values.concat fetch_recorded_stats(offset + page_size, page_size) if values.size == page_size
           end
         end
-        
+
         def append_req(values)
           [
             sheet_id,
-            "A3:#{COLUMN_LETTERS.last}3",
-            Google::Apis::SheetsV4::ValueRange.new(values: values),
+            range('A3', "#{COLUMN_LETTERS.last}3"),
+            ::Google::Apis::SheetsV4::ValueRange.new(values: values),
             {
               value_input_option: 'USER_ENTERED',
             },
