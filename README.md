@@ -1,7 +1,7 @@
 RIT Covid Stat Recorder
 ---
 
-[![Latest Version 2.4.0][docker-version-badge-url]][docker-hub-url] [![Licensed under the GNU Public License version 3.0][license-badge-url]](./LICENSE.md) [![Maintenace Status: YES][maintenance-badge-url]](./README.md)
+[![Latest Version 2.5.0][docker-version-badge-url]][docker-hub-url] [![Licensed under the GNU Public License version 3.0][license-badge-url]](./LICENSE.md) [![Maintenace Status: YES][maintenance-badge-url]](./README.md)
 
 A simple page scraper that takes a number of stats off the [RIT Covid Stats](https://www.rit.edu/ready/dashboard) page and saves them to a database and google sheets.
 
@@ -30,6 +30,18 @@ Install gems:
 ```
 bundle install
 ```
+
+Google Credentials setup for exporting to google sheets:
+
+1. Create your Google Sheets API credentials at the Google Cloud Platform and download the json file
+2. Create a directory somewhere to capture token: `mkdir ./credstore`
+3. Place the downloaded json file in the above directory as `credentials.json`, e.h. `./credstore/credentials.json`
+4. Run `docker run --rm -it -e DEBUG=1 -v $PWD/credstore:/app/credstore glossawy/rit-covid-recorder:current bin/recorder authorize --home=./credstore`
+5. Follow prompts to acquire token
+6. Token will now be found at `./credstore/token.yaml`
+7. When running the image as daemon or with export, make sure to mount the credentials directory, e.g. `-e CREDENTIALS_HOME=/app/credstore -v $PWD/credstore:/app/credstore`, it cannot be read-only
+
+Note: Currently the scraper will assume your spreadsheet's columns matches ours.
 
 DB setup:
 
@@ -85,7 +97,7 @@ Logging output while running is written to stdout as well as:
   - zsh and powershell scripts to publish a docker image to a docker hub repository with basic versioning
 
 [docker-version-badge-url]: https://img.shields.io/docker/v/glossawy/rit-covid-recorder?sort=semver&style=for-the-badge
-[docker-hub-url]: https://hub.docker.com/layers/glossawy/rit-covid-recorder/2.4.0/images/sha256-fd4bc5aa96ed6b358a624af3b688f928710b5398ca68645a7ea465390809b022
+[docker-hub-url]: https://hub.docker.com/layers/174827952/glossawy/rit-covid-recorder/2.5.0/images/sha256-b46c6f8c725d4c64a1da026777b5a532297f5dc06bc2733e71eb2b3ddf8addea
 
 [license-badge-url]: https://img.shields.io/github/license/Glossawy/rit-covid-stat-recorder?style=for-the-badge
 [maintenance-badge-url]: https://img.shields.io/maintenance/yes/2021?style=for-the-badge
