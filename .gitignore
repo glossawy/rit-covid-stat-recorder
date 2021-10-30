@@ -2,8 +2,8 @@
 log/**/*
 !log/.gitkeep
 
-credentials.json
-token.yaml
+**/credentials.json
+**/token.yaml
 
 db/stats.sqlite3
 db/stats.sqlite3.*
