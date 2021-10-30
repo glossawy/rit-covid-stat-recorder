@@ -11,8 +11,8 @@ Hanami::Model.migration do
       column :isolated_on_campus, Integer, null: false
       column :isolated_off_campus, Integer, null: false
       column :isolation_bed_availability, Integer, null: false
-      column :surveillance_positive_ratio, Integer, null: false 
-      
+      column :surveillance_positive_ratio, Integer, null: false
+
       column :last_updated_at, DateTime, null: false
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

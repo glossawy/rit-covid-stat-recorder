@@ -1,9 +1,37 @@
 require 'dry/cli'
 
+class Dry::CLI
+  private
+
+  def perform_command(arguments)
+    command, args = parse(kommand, arguments, [])
+    # call .perform instead of .call
+    command.perform(**args)
+  end
+
+  def perform_registry(arguments)
+    result = registry.get(arguments)
+
+    if result.found?
+      command, args = parse(result.command, result.arguments, result.names)
+
+      result.before_callbacks.run(command, args)
+      command.perform(**args)
+      result.after_callbacks.run(command, args)
+    else
+      usage(result)
+    end
+  end
+end
+
 module Recorder
   class CLI
     def self.register(name, command = nil, aliases: [], &block)
       Commands.register(name, command, aliases: aliases, &block)
+    end
+
+    def self.run
+      Dry::CLI.new(self::Commands).call
     end
 
     module Commands
@@ -65,5 +93,9 @@ module Recorder
       require 'recorder/cli/commands/daemon'
       require 'recorder/cli/commands/import'
     end
+
+    require 'recorder/cli/commands/authorize'
+
+    register 'authorize', Commands::Authorize
   end
 end

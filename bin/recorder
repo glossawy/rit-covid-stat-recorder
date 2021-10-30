@@ -7,4 +7,4 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'bundler'
 require 'recorder'
 
-Dry::CLI.new(Recorder::CLI::Commands).call
+Recorder::CLI.run

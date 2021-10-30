@@ -7,7 +7,11 @@ require_relative './google/authorizer'
 module Recorder
   module Google
     class << self
-      delegate :authorize!, to: Recorder::Google::Authorizer
+      delegate :authorize!, :credentials, :can_authorize?, to: Recorder::Google::Authorizer
+
+      def authorized?
+        can_authorize? && credentials.present?
+      end
 
       def sheets_api
         @sheets_api ||=

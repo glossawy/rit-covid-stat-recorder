@@ -4,9 +4,16 @@ module Recorder
       class Command < Dry::CLI::Command
         attr_reader :templates
 
+        class_attribute :skip_debug_info, instance_accessor: false, default: false
+
         def initialize
           require 'recorder/cli/commands/templates'
           @templates = Templates.new(self.class)
+        end
+
+        def perform(*args, **kwargs)
+          print_debug_info unless self.class.skip_debug_info?
+          call(*args, **kwargs)
         end
 
         private
@@ -21,7 +28,7 @@ module Recorder
           end
         end
 
-        SAY_FORMATTER = "%<operation>12s %<path>s\n".freeze
+        SAY_FORMATTER = "%<operation>s %<path>s".freeze
 
         def render(path, context)
           template = File.read(path)
@@ -47,7 +54,41 @@ module Recorder
           Recorder.logger.debug(*args)
         end
 
+        def print_debug_info_helper(name, value, indent: '', padout: 0)
+          case value
+          when Hash
+            debug("#{indent}#{name.rjust(padout, ' ')}:")
+            new_indent = "#{indent}  "; new_padout = value.keys.map(&:size).max
+            value.each { |k, v| print_debug_info_helper(k, v, indent: new_indent, padout: new_padout) }
+          else
+            debug("#{indent}#{name.rjust(padout, ' ')}: #{value}")
+          end
+        end
+
+        def print_debug_info
+          return unless Recorder.debug_mode?
+
+          print_debug_info_helper(
+            'paths',
+            {
+              'root' => Recorder.paths.root,
+              'logs' => Recorder.paths.logs,
+              'data' => Recorder.paths.db,
+              'auth' => {
+                'home' => Recorder.paths.credentials_home,
+                'creds' => Recorder.paths.credentials_file,
+                'token' => Recorder.paths.token_file,
+              },
+            }
+          )
+        end
+
         def say(operation, path)
+          operations = operation.to_s.split('>').map(&:strip)
+          operations[-1] = "#{operations[-1]}:"
+
+          operation = operations.map { |op| $pastel.say_op(op) }.join($pastel.say_op_sep(' ➔ '))
+
           info(SAY_FORMATTER % { operation: operation, path: path })
         end
 
@@ -78,20 +119,20 @@ module Recorder
 
         class << self
           def root
-            File
+            Recorder.paths.root
           end
 
           def migrations
-            root.join('db', 'migrations')
+            Recorder.paths.db.join('migrations')
           end
 
           def migration(context)
             filename = "%{timestamp}_%{name}" % { timestamp: current_migration_timestamp, name: context.migration }
-            root.join('db', 'migrations', "#{filename}.rb")
+            migrations.join("#{filename}.rb")
           end
 
           def find_migration(context)
-            Dir.glob(root.join('db', 'migrations', "*_#{context.migration}.rb")).sort!.first
+            Dir.glob(migrations.join("*_#{context.migration}.rb")).sort!.first
           end
 
           def current_migration_timestamp

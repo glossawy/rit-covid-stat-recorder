@@ -6,7 +6,7 @@ module Recorder
       include Singleton
 
       class << self
-        delegate :authorize!, :credentials, to: :instance
+        delegate :authorize!, :credentials, :can_authorize?, to: :instance
       end
 
       OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
@@ -17,7 +17,11 @@ module Recorder
       end
 
       def credentials(user_id = 'default')
-        authorizer.get_credentials user_id
+        authorizer.get_credentials user_id if can_authorize?
+      end
+
+      def can_authorize?
+        Recorder.paths.credentials_file.exist?
       end
 
       private
@@ -46,13 +50,13 @@ module Recorder
 
       def client_id
         @client_id ||= ::Google::Auth::ClientId.from_file(
-          Recorder.paths.root.join('credentials.json')
+          Recorder.paths.credentials_file
         )
       end
 
       def token_store
         @token_store ||= ::Google::Auth::Stores::FileTokenStore.new(
-          file: Recorder.paths.root.join('token.yaml')
+          file: Recorder.paths.token_file
         )
       end
     end

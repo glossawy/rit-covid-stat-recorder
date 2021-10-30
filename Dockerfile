@@ -16,8 +16,6 @@ COPY Gemfile Gemfile.lock /app/
 RUN bundle install
 
 COPY ./.env /app/.env
-COPY ./credentials.json /app/credentials.json
-COPY ./token.yaml /app/token.yaml
 
 COPY ./bin /app/bin
 COPY ./lib /app/lib

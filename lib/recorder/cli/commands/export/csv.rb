@@ -53,7 +53,7 @@ module Recorder
             require 'csv'
             io = StringIO.new
             csv = CSV.new(io)
-            
+
             csv << ORDERING.keys.map(&:to_s)
             rows.each do |row|
               csv << row

@@ -29,6 +29,8 @@ $recorder_logger = Recorder::Logging::MultiLogger.new(
 
 $pastel = Pastel.new.tap do |p|
   p.alias_color(:colored_url, :bright_blue)
+  p.alias_color(:say_op, :bright_green, :bold)
+  p.alias_color(:say_op_sep, :bright_white, :bold)
 end
 
 $prompter = TTY::Prompt.new
