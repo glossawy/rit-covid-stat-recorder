@@ -11,6 +11,7 @@ module Recorder
           SPRING_2021_SUMMER_2021_CUTOFF = Time.zone.parse('2021-05-26')
 
           FALL_2021_START = Time.zone.parse('2021-08-16')
+          SPRING_2022_START = Time.zone.parse('2022-01-10')
 
           LEVEL_TRANSFORM_FALL = {
             'green' => 'Green (Low Risk with Vigilance)',
@@ -50,7 +51,9 @@ module Recorder
             tests_administered: :tests_to_date,
             total_staff: ->(v, time) {
               adjusted_value =
-                if time >= FALL_2021_START
+                if time >= SPRING_2022_START
+                  Recorder::Spiders::RitSpiderSpring2022::LAST_TOTALS_FALL[:total_cases_employees] + v
+                elsif time >= FALL_2021_START
                   Recorder::Spiders::RitSpiderFall2021::LAST_TOTALS_SPRING[:total_cases_employees] + v
                 else
                   v
@@ -60,7 +63,9 @@ module Recorder
             },
             total_students: ->(v, time) {
               adjusted_value =
-                if time >= FALL_2021_START
+                if time >= SPRING_2022_START
+                  Recorder::Spiders::RitSpiderSpring2022::LAST_TOTALS_FALL[:total_cases_students] + v
+                elsif time >= FALL_2021_START
                   Recorder::Spiders::RitSpiderFall2021::LAST_TOTALS_SPRING[:total_cases_students] + v
                 else
                   v
@@ -132,6 +137,7 @@ module Recorder
             end
 
             statistic.merge!(
+              hospitalizations: recorded_on < SPRING_2022_START ? -1 : 0,
               surveillance_positive_ratio: -1,
               num_days_included: 14,
               recorded_at: recorded_on,

@@ -31,10 +31,11 @@ module Recorder
             tests_to_date: nil,
             isolation_bed_availability: nil,
             surveillance_positive_ratio: nil,
+            hospitalizations: nil,
           }
 
           def export_csv(context)
-            output = 
+            output =
               if context.pretty
                 render_table
               else

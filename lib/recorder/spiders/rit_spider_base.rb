@@ -143,7 +143,7 @@ module Recorder::Spiders
     def sanitize(statistics)
       statistics = statistics.map(&:strip)
 
-      nc_s, nc_e, tc_s, tc_e, q_on, q_off, i_on, i_off, tests_to_date, bed_pct, surv_pos_pct, *rest = statistics
+      nc_s, nc_e, tc_s, tc_e, q_on, q_off, i_on, i_off, tests_to_date, bed_pct, surv_pos_pct, hospitalizations, *rest = statistics
       if defunct?
         tc_s, tc_e, q_on, q_off, i_on, i_off, tests_to_date, bed_pct, surv_pos_pct, *rest = statistics
 
@@ -177,7 +177,8 @@ module Recorder::Spiders
         isolated_off_campus: i_off,
         tests_to_date: tests_to_date,
         isolation_bed_availability: bed_pct,
-        surveillance_positive_ratio: surv_pos_pct
+        surveillance_positive_ratio: surv_pos_pct,
+        hospitalizations: hospitalizations || -1,
       }.transform_values(&:to_i)
     end
 

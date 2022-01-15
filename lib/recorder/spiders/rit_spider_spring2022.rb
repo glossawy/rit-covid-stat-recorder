@@ -3,8 +3,8 @@ module Recorder::Spiders
     self.dashboard_url = 'https://www.rit.edu/ready/spring-2022-dashboard'
 
     LAST_TOTALS_FALL = {
-      total_cases_students: 721,
-      total_cases_employees: 278,
+      total_cases_students: 790,
+      total_cases_employees: 363,
     }
 
     single_value_field :status,
@@ -22,6 +22,8 @@ module Recorder::Spiders
                        when_defunct: 'Past 14 Days',
                        when_missing: 'Past 14 Days'
 
+
+
     # This is for statistics caught by `#cleanse_for_css`
     MISSING_STATISTICS_TO_DEFAULTS = {
       quarantined_on_campus: -1,
@@ -37,6 +39,9 @@ module Recorder::Spiders
       statistics = cleanse_for_css('.statistic > p:nth-child(1)')
 
       statistics.concat(MISSING_STATISTICS_TO_DEFAULTS.values)
+
+      # Bring hospitalizations from front to end
+      statistics.rotate!(1)
 
       statistics = sanitize(statistics)
 

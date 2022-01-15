@@ -74,6 +74,7 @@ module Recorder
                          tests_to_date
                          isolation_bed_availability
                          surveillance_positive_ratio
+                         hospitalizations
                        ]
 
         COLUMN_TO_ATTR.freeze

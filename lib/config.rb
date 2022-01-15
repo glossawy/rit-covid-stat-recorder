@@ -3,7 +3,7 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 DATABASE_PATH = Recorder.paths.db.join 'stats.sqlite3'
 DATABASE_URL = "sqlite://#{DATABASE_PATH}"
 
-MIGRATIONS_DIR = Recorder.paths.db.join 'migrations'
+MIGRATIONS_DIR = ENV.fetch('MIGRATIONS_DIR', Recorder.paths.db.join('migrations'))
 
 APP_LOG_PATH = Recorder.paths.logs.join 'app.log'
 DB_LOG_PATH = Recorder.paths.logs.join 'database.log'

@@ -16,7 +16,7 @@ COPY Gemfile Gemfile.lock /app/
 RUN bundle install
 
 COPY ./.env /app/.env
-
+COPY ./db/migrations /app/migrations
 COPY ./bin /app/bin
 COPY ./lib /app/lib
 COPY ./script /app/script
@@ -24,6 +24,7 @@ COPY ./script /app/script
 RUN cp /usr/share/zoneinfo/America/New_York /etc/localtime
 RUN echo "America/New_York" > /etc/timezone && date
 
+ENV MIGRATIONS_DIR="/app/migrations"
 ENV DAEMON_PERIOD="${period}"
 
 VOLUME /app/db
